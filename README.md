@@ -3,18 +3,41 @@
 **Author**: Omid Nateghi  
 **Engine**: Omid Coder  
 **Language**: Rust 🦀  
+**Version**: 0.2.0
 
-Cyrus is a comprehensive, modular tool for managing programming language environments with local project isolation and global language installation capabilities.
+Cyrus is a comprehensive, modular tool for managing programming language environments with local project isolation, global language installation capabilities, and intelligent command aliasing.
 
 ## 🚀 Features
 
-- **Multi-language Support**: Python, JavaScript/Node.js, Go (extensible)
+- **Multi-language Support**: Python, JavaScript/Node.js, Go, Rust, Java, PHP, Ruby (extensible)
 - **Local Project Isolation**: Each project runs in its own environment
 - **Global Language Management**: Install languages to `~/.cyrus`
-- **Package Manager Integration**: Support for pip, npm, yarn, poetry, bun, etc.
+- **Smart Command Aliasing**: Intelligent package manager integration
+- **Package Manager Integration**: Support for pip, npm, yarn, poetry, bun, cargo, maven, composer, bundler, etc.
 - **Fast & Lightweight**: Built with Rust for maximum performance
 - **Modular Architecture**: Easy to extend with new languages
 - **Cross-platform**: Windows, macOS, Linux support
+
+## 🎯 Smart Aliasing
+
+Cyrus includes intelligent command aliasing that automatically maps commands to your project's package manager:
+
+```bash
+# Traditional way:
+bun run dev
+npm run build
+poetry run pytest
+
+# With Cyrus smart aliasing:
+cyrus run dev    # → bun run dev (if using bun)
+cyrus run build  # → npm run build (if using npm)
+cyrus run test   # → poetry run pytest (if using poetry)
+
+# Even shorter with custom aliases:
+cyrus run dev    # → Your custom alias
+cyrus run t      # → test command
+cyrus run b      # → build command
+```
 
 ## 📦 Installation
 
@@ -38,9 +61,16 @@ Cyrus is a comprehensive, modular tool for managing programming language environ
 cyrus install python3.11
 cyrus install node20
 cyrus install go1.21
+cyrus install rust1.75
+cyrus install java21
+cyrus install php8.3
+cyrus install ruby3.3
 
 # List installed languages
 cyrus list
+
+# Show all supported languages
+cyrus languages
 ```
 
 ### Project Management
@@ -49,10 +79,16 @@ cyrus list
 mkdir my-app && cd my-app
 cyrus init
 
-# Run commands in project environment
-cyrus run python app.py
-cyrus run npm start
-cyrus run go build
+# Run commands with smart aliasing
+cyrus run dev        # Runs the dev script with your package manager
+cyrus run test       # Runs tests
+cyrus run build      # Builds the project
+
+# Manage aliases
+cyrus alias list     # Show all aliases
+cyrus alias add t "npm test"  # Add custom alias
+cyrus alias remove t # Remove alias
+cyrus alias toggle   # Enable/disable aliasing
 
 # Show project configuration
 cyrus config
@@ -63,56 +99,89 @@ cyrus config
 | Command | Description |
 |---------|-------------|
 | `cyrus install <lang><ver>` | Install language globally |
-| `cyrus init` | Initialize new project |
-| `cyrus run <command>` | Run command in project env |
+| `cyrus init` | Initialize new project with enhanced options |
+| `cyrus run <command>` | Run command with smart aliasing |
+| `cyrus alias <action>` | Manage project aliases |
+| `cyrus languages` | Show supported languages |
 | `cyrus list` | List installed languages |
 | `cyrus config` | Show configuration |
 | `cyrus update` | Update Cyrus or languages |
 | `cyrus remove <lang><ver>` | Remove language |
 | `cyrus version` | Show version info |
 
-## 🏗️ Architecture
-
-```
-cyrus/
-├── src/
-│   ├── core/           # Core functionality
-│   ├── languages/      # Language handlers
-│   ├── commands/       # CLI commands
-│   ├── installer/      # Installation logic
-│   ├── runtime/        # Runtime environment
-│   └── utils/          # Utilities
-├── config/             # Language configurations
-├── docs/               # Multi-language documentation
-├── tests/              # Unit & integration tests
-└── examples/           # Example projects
-```
-
 ## 🌍 Supported Languages
 
-- **Python**: 3.8, 3.9, 3.10, 3.11, 3.12
-- **JavaScript/Node.js**: 16, 18, 20, 21
-- **Go**: 1.19, 1.20, 1.21, 1.22
+| Language | Aliases | Package Managers | Default Version |
+|----------|---------|------------------|-----------------|
+| **Python** | py, python3 | pip, poetry, pipenv | 3.11 |
+| **JavaScript/Node.js** | js, node, nodejs | npm, yarn, pnpm, bun | 20 |
+| **Go** | go | go mod | 1.21 |
+| **Rust** | rs | cargo | 1.75 |
+| **Java** | java | maven, gradle | 21 |
+| **PHP** | php | composer | 8.3 |
+| **Ruby** | rb | gem, bundler | 3.3 |
 
-## 📄 Project Configuration
+## 📄 Enhanced Project Configuration
 
-`cyrus.toml` example:
+`cyrus.toml` with smart aliasing:
 ```toml
 name = "my-project"
-language = "python"
-version = "3.11"
-package_manager = "pip"
-dependencies = ["requests", "flask"]
-dev_dependencies = ["pytest", "black"]
+language = "javascript"
+version = "20"
+package_manager = "bun"
+dependencies = ["express", "typescript"]
+dev_dependencies = ["jest", "nodemon"]
+
+# Enable smart aliasing
+enable_aliases = true
 
 [scripts]
-start = "python app.py"
-test = "pytest"
-lint = "black ."
+start = "node dist/index.js"
+build = "tsc"
+dev = "nodemon src/index.ts"
+
+# Custom aliases for shorter commands
+[custom_aliases]
+t = "bun test"
+b = "bun run build"
+d = "bun run dev"
+install = "bun install"
 
 [environment]
-DEBUG = "true"
-PORT = "8000"
+NODE_ENV = "development"
+PORT = "3000"
+```
+
+## 🎭 Aliasing Examples
+
+### JavaScript/Node.js with Bun
+```bash
+cyrus run dev     # → bun run dev
+cyrus run test    # → bun test
+cyrus run build   # → bun run build
+cyrus run install # → bun install
+```
+
+### Python with Poetry
+```bash
+cyrus run test    # → poetry run pytest
+cyrus run install # → poetry install
+cyrus run shell   # → poetry shell
+```
+
+### Rust
+```bash
+cyrus run build   # → cargo build
+cyrus run test    # → cargo test
+cyrus run check   # → cargo check
+cyrus run clippy  # → cargo clippy
+```
+
+### Java with Maven
+```bash
+cyrus run compile # → mvn compile
+cyrus run test    # → mvn test
+cyrus run package # → mvn package
 ```
 
 ## 🛠️ Development
@@ -126,6 +195,11 @@ cargo build --release
 
 # Generate documentation
 cargo doc --open
+
+# Test with example projects
+cd examples/enhanced
+cyrus init
+cyrus run dev
 ```
 
 ## 📖 Documentation
@@ -156,4 +230,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Cyrus - Making language management simple and efficient for developers worldwide.*
+*Cyrus - Making language management simple, efficient, and intelligent for developers worldwide.*

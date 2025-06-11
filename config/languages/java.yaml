@@ -1,0 +1,32 @@
+# config/languages/java.yaml
+name: java
+display_name: Java
+versions:
+  - "8"
+  - "11"
+  - "17"
+  - "21"
+default_version: "21"
+package_managers:
+  - maven
+  - gradle
+default_package_manager: maven
+download_urls:
+  "21": "https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz"
+install_commands:
+  - "mvn dependency:get -Dartifact={package}"
+  - "gradle implementation {package}"
+run_commands:
+  java: "java"
+  javac: "javac"
+  mvn: "mvn"
+  gradle: "gradle"
+environment_setup:
+  - "mvn archetype:generate -DgroupId=com.example -DartifactId=example -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false"
+aliases:
+  compile: "javac *.java"
+  run: "java Main"
+  test: "mvn test"
+  build: "mvn clean compile"
+  package: "mvn package"
+  clean: "mvn clean"

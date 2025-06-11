@@ -1,11 +1,80 @@
-name = "javascript-example"
+# examples/enhanced-javascript/cyrus.toml
+# Enhanced JavaScript project example with Bun and smart aliasing
+
+name = "enhanced-js-example"
 language = "javascript"
 version = "20"
-package_manager = "npm"
-dependencies = ["express"]
-dev_dependencies = ["jest"]
+package_manager = "bun"
+dependencies = [
+    "express",
+    "typescript", 
+    "@types/node",
+    "cors",
+    "helmet"
+]
+dev_dependencies = [
+    "jest",
+    "@types/jest",
+    "nodemon",
+    "ts-node",
+    "eslint",
+    "prettier"
+]
 
+# Enable smart command aliasing
+enable_aliases = true
+
+# Standard scripts
 [scripts]
-start = "node app.js"
-dev = "nodemon app.js"
-test = "jest"
+start = "node dist/index.js"
+build = "tsc"
+clean = "rm -rf dist node_modules"
+typecheck = "tsc --noEmit"
+
+# Custom aliases for enhanced workflow
+[custom_aliases]
+# Development shortcuts
+dev = "bun run dev"
+d = "bun run dev"
+hot = "nodemon --exec bun run src/index.ts"
+
+# Testing shortcuts  
+test = "bun test"
+t = "bun test"
+test-watch = "bun test --watch"
+tw = "bun test --watch"
+
+# Building shortcuts
+build = "bun run build"
+b = "bun run build"
+start = "bun start"
+s = "bun start"
+
+# Package management shortcuts
+install = "bun install"
+i = "bun install"
+add = "bun add"
+remove = "bun remove"
+update = "bun update"
+
+# Code quality shortcuts
+lint = "eslint src/**/*.ts"
+lint-fix = "eslint src/**/*.ts --fix"
+format = "prettier --write src/**/*.ts"
+check = "bun run typecheck"
+
+# Docker shortcuts (if using Docker)
+docker-build = "docker build -t enhanced-js-example ."
+docker-run = "docker run -p 3000:3000 enhanced-js-example"
+docker-dev = "docker-compose up --build"
+
+# Git shortcuts
+push = "git add . && git commit -m 'Auto commit' && git push"
+sync = "git pull origin main"
+
+[environment]
+NODE_ENV = "development"
+PORT = "3000"
+DEBUG = "true"
+LOG_LEVEL = "info"
+API_VERSION = "v1"

@@ -1,0 +1,29 @@
+# config/languages/php.yaml
+name: php
+display_name: PHP
+versions:
+  - "7.4"
+  - "8.0"
+  - "8.1"
+  - "8.2"
+  - "8.3"
+default_version: "8.3"
+package_managers:
+  - composer
+default_package_manager: composer
+download_urls:
+  "8.3": "https://www.php.net/distributions/php-8.3.tar.gz"
+install_commands:
+  - "composer require {package}"
+run_commands:
+  php: "php"
+  composer: "composer"
+environment_setup:
+  - "composer init --no-interaction"
+aliases:
+  serve: "php -S localhost:8000"
+  test: "phpunit"
+  install: "composer install"
+  update: "composer update"
+  require: "composer require"
+  autoload: "composer dump-autoload"

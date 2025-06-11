@@ -1,0 +1,29 @@
+# config/languages/ruby.yaml
+name: ruby
+display_name: Ruby
+versions:
+  - "2.7"
+  - "3.0"
+  - "3.1"
+  - "3.2"
+  - "3.3"
+default_version: "3.3"
+package_managers:
+  - gem
+  - bundler
+default_package_manager: bundler
+download_urls:
+  "3.3": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.tar.gz"
+install_commands:
+  - "gem install {package}"
+  - "bundle add {package}"
+run_commands:
+  ruby: "ruby"
+  gem: "gem"
+  bundle: "bundle"
+  rails: "rails"
+  rake: "rake"
+environment_setup:
+  - "bundle init"
+aliases:
+  run: "ruby main.rb"

@@ -1,10 +1,10 @@
-//! Cyrus - All-in-One Language Management Tool
+//! Cyrus - All-in-One Language Management Tool (Enhanced)
 //! 
 //! Author: Omid Nateghi
 //! Engine: Omid Coder
 //! 
 //! A comprehensive tool for managing programming language environments
-//! with local project isolation and global language installation.
+//! with local project isolation, global language installation, and smart aliasing.
 
 use clap::{Parser, Subcommand};
 use std::process;
@@ -22,8 +22,8 @@ use core::CyrusCore;
 
 #[derive(Parser)]
 #[command(name = "cyrus")]
-#[command(about = "All-in-One Language Management Tool")]
-#[command(version = "0.1.0")]
+#[command(about = "All-in-One Language Management Tool with Smart Aliasing")]
+#[command(version = "0.2.0")]
 #[command(author = "Omid Nateghi")]
 struct Cli {
     #[command(subcommand)]
@@ -36,7 +36,7 @@ enum Commands {
     Install(InstallCommand),
     /// Initialize a new project
     Init(InitCommand),
-    /// Run commands in the project environment
+    /// Run commands in the project environment with smart aliasing
     Run(RunCommand),
     /// List installed languages and versions
     List(ListCommand),
@@ -46,6 +46,10 @@ enum Commands {
     Remove(RemoveCommand),
     /// Show project or global configuration
     Config(ConfigCommand),
+    /// Manage project aliases
+    Alias(run::AliasCommand),
+    /// Show supported languages
+    Languages,
     /// Show version information
     Version(VersionCommand),
 }
@@ -68,6 +72,8 @@ async fn main() {
         Commands::Update(cmd) => update::execute(cmd, &core).await,
         Commands::Remove(cmd) => remove::execute(cmd, &core).await,
         Commands::Config(cmd) => config::execute(cmd, &core).await,
+        Commands::Alias(cmd) => run::execute_alias(cmd, &core).await,
+        Commands::Languages => languages_command(&core).await,
         Commands::Version(cmd) => version::execute(cmd, &core).await,
     };
 
@@ -75,4 +81,42 @@ async fn main() {
         eprintln!("Error: {}", e);
         process::exit(1);
     }
+}
+
+async fn languages_command(_core: &CyrusCore) -> anyhow::Result<()> {
+    use colored::*;
+    
+    println!("{}", "🌐 Supported Languages:".cyan().bold());
+    println!();
+    
+    let supported = languages::get_supported_languages();
+    
+    for language in supported {
+        let display_name = languages::get_language_display_name(language);
+        let aliases = languages::get_language_aliases(language);
+        
+        println!("{} {} {}", 
+                 "🔧".blue(), 
+                 display_name.yellow().bold(),
+                 format!("({})", language).cyan());
+        
+        if !aliases.is_empty() {
+            println!("   Aliases: {}", aliases.join(", ").green());
+        }
+        
+        if let Some(handler) = languages::get_language_handler(language) {
+            let config = handler.get_config();
+            println!("   Versions: {}", config.versions.join(", ").blue());
+            println!("   Package Managers: {}", config.package_managers.join(", ").magenta());
+        }
+        
+        println!();
+    }
+    
+    println!("{}", "💡 Tips:".yellow().bold());
+    println!("• Use 'cyrus init' to create a new project");
+    println!("• Use 'cyrus install <language><version>' to install a language");
+    println!("• Use 'cyrus run <command>' for smart command aliasing");
+    
+    Ok(())
 }

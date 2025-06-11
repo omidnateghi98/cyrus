@@ -1,0 +1,99 @@
+# Enhanced Cyrus Project Configuration Example
+# examples/cyrus_config/cyrus.toml
+
+name = "enhanced-example"
+language = "javascript"
+version = "20"
+package_manager = "bun"
+dependencies = ["express", "typescript", "@types/node"]
+dev_dependencies = ["jest", "@types/jest", "nodemon"]
+
+# Enable smart aliasing (default: true)
+enable_aliases = true
+
+# Built-in scripts (traditional)
+[scripts]
+start = "node dist/index.js"
+build = "tsc"
+clean = "rm -rf dist"
+lint = "eslint src/**/*.ts"
+format = "prettier --write src/**/*.ts"
+
+# Custom aliases (enhanced feature)
+[custom_aliases]
+# Short aliases for common commands
+dev = "bun run dev"
+test = "bun test"
+t = "bun test"
+b = "bun run build"
+s = "bun start"
+
+# Package manager shortcuts
+install = "bun install"
+add = "bun add"
+remove = "bun remove"
+
+# TypeScript specific
+tsc = "bun run tsc"
+watch = "bun run tsc --watch"
+
+# Docker commands
+docker-build = "docker build -t enhanced-example ."
+docker-run = "docker run -p 3000:3000 enhanced-example"
+
+# Environment variables
+[environment]
+NODE_ENV = "development"
+PORT = "3000"
+DEBUG = "true"
+LOG_LEVEL = "info"
+
+# Examples for different languages:
+
+# Python with Poetry example:
+# [custom_aliases]
+# install = "poetry install"
+# add = "poetry add"
+# shell = "poetry shell"
+# run = "poetry run python"
+# test = "poetry run pytest"
+# lint = "poetry run flake8"
+# format = "poetry run black ."
+
+# Rust example:
+# [custom_aliases]
+# b = "cargo build"
+# r = "cargo run"
+# t = "cargo test"
+# c = "cargo check"
+# clippy = "cargo clippy"
+# fmt = "cargo fmt"
+# doc = "cargo doc --open"
+# bench = "cargo bench"
+
+# Java with Maven example:
+# [custom_aliases]
+# compile = "mvn compile"
+# test = "mvn test"
+# package = "mvn package"
+# clean = "mvn clean"
+# install = "mvn install"
+# run = "mvn exec:java"
+
+# PHP with Composer example:
+# [custom_aliases]
+# install = "composer install"
+# require = "composer require"
+# update = "composer update"
+# serve = "php -S localhost:8000"
+# test = "phpunit"
+# autoload = "composer dump-autoload"
+
+# Ruby with Bundler example:
+# [custom_aliases]
+# install = "bundle install"
+# exec = "bundle exec"
+# console = "bundle console"
+# server = "bundle exec rails server"
+# test = "bundle exec rspec"
+# migrate = "bundle exec rails db:migrate"

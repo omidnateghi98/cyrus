@@ -1,0 +1,33 @@
+# config/languages/rust.yaml
+name: rust
+display_name: Rust
+versions:
+  - "1.70"
+  - "1.71"
+  - "1.72"
+  - "1.73"
+  - "1.74"
+  - "1.75"
+default_version: "1.75"
+package_managers:
+  - cargo
+default_package_manager: cargo
+download_urls:
+  "1.75": "https://forge.rust-lang.org/infra/channel-layout.html"
+install_commands:
+  - "cargo add {package}"
+run_commands:
+  cargo: "cargo"
+  rustc: "rustc"
+  rustup: "rustup"
+environment_setup:
+  - "cargo init"
+aliases:
+  build: "cargo build"
+  run: "cargo run"
+  test: "cargo test"
+  check: "cargo check"
+  clippy: "cargo clippy"
+  fmt: "cargo fmt"
+  doc: "cargo doc"
+  bench: "cargo bench"
