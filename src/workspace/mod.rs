@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use crate::error::{CyrusError, Result as CyrusResult};
 use crate::core::Project;
+use futures::future;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Workspace {

@@ -105,6 +105,7 @@ pub enum ValidationWarning {
     #[error("Large number of dependencies ({count}) might slow down installation")]
     TooManyDependencies { count: usize },
 }
+impl std::error::Error for ValidationWarning {}
 
 impl std::fmt::Display for ValidationWarning {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

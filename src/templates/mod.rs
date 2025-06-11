@@ -256,23 +256,23 @@ impl TemplateManager {
             template: name.to_string() 
         })
     }
-    
+
     fn get_builtin_template(&self, name: &str) -> Option<ProjectTemplate> {
         match name {
-            "react-typescript" => Some(create_react_typescript_template()),
-            "rust-cli" => Some(create_rust_cli_template()),
-            "python-api" => Some(create_python_api_template()),
-            "node-express" => Some(create_node_express_template()),
-            "vue-typescript" => Some(create_vue_typescript_template()),
-            "rust-web" => Some(create_rust_web_template()),
-            "python-ml" => Some(create_python_ml_template()),
-            "go-api" => Some(create_go_api_template()),
-            "java-spring" => Some(create_java_spring_template()),
-            "python-cli" => Some(create_python_cli_template()),
+            "react-typescript" => Some(builtin::create_react_typescript_template()),
+            "rust-cli" => Some(builtin::create_rust_cli_template()),
+            "python-api" => Some(builtin::create_python_api_template()),
+            "node-express" => Some(builtin::create_node_express_template()),
+            "vue-typescript" => Some(builtin::create_vue_typescript_template()),
+            "rust-web" => Some(builtin::create_rust_web_template()),
+            "python-ml" => Some(builtin::create_python_ml_template()),
+            "go-api" => Some(builtin::create_go_api_template()),
+            "java-spring" => Some(builtin::create_java_spring_template()),
+            "python-cli" => Some(builtin::create_python_cli_template()),
             _ => None,
         }
     }
-    
+
     fn create_template_context(
         &self,
         project_name: &str,

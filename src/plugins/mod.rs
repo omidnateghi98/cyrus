@@ -15,7 +15,9 @@ pub mod loader;
 use interface::{CyrusPlugin, PluginInfo, PluginCapabilities};
 use registry::PluginRegistry;
 use loader::PluginLoader;
-
+use std::collections::HashMap;
+use std::path::{Path, PathBuf};
+use std::sync::Arc;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PluginManifest {
     pub name: String,

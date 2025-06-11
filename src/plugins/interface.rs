@@ -155,7 +155,6 @@ pub struct PluginContext {
     pub cyrus_version: String,
     pub cyrus_core: std::sync::Arc<crate::core::CyrusCore>,
     pub config: crate::config::GlobalConfig,
-    pub logger: slog::Logger,
 }
 
 impl PluginContext {
@@ -163,18 +162,10 @@ impl PluginContext {
         cyrus_core: std::sync::Arc<crate::core::CyrusCore>,
         config: crate::config::GlobalConfig,
     ) -> Self {
-        use slog::Drain;
-        
-        let decorator = slog_term::TermDecorator::new().build();
-        let drain = slog_term::FullFormat::new(decorator).build().fuse();
-        let drain = slog_async::Async::new(drain).build().fuse();
-        let logger = slog::Logger::root(drain, slog::o!("module" => "plugin"));
-        
         Self {
             cyrus_version: env!("CARGO_PKG_VERSION").to_string(),
             cyrus_core,
             config,
-            logger,
         }
     }
 }

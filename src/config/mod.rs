@@ -12,32 +12,32 @@ pub mod validation;
 
 use profiles::CyrusProfile;
 
-#[derive(Debug, Serialize, Deserialize, Validate, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct GlobalConfig {
     #[validate(length(min = 1))]
     pub default_profile: String,
-    
+
     pub profiles: HashMap<String, CyrusProfile>,
-    
+
     #[serde(default)]
     pub global_aliases: HashMap<String, String>,
-    
+
     #[serde(default)]
     pub security_settings: SecuritySettings,
-    
+
     #[serde(default)]
     pub network_settings: NetworkSettings,
-    
+
     #[serde(default)]
     pub ui_settings: UiSettings,
-    
+
     #[serde(default)]
     pub plugin_settings: PluginSettings,
-    
+
     #[validate(range(min = 1, max = 10))]
     #[serde(default = "default_parallel_downloads")]
     pub parallel_downloads: u32,
-    
+
     #[serde(default)]
     pub cache_settings: CacheSettings,
 }
@@ -46,16 +46,16 @@ pub struct GlobalConfig {
 pub struct SecuritySettings {
     #[serde(default = "default_true")]
     pub verify_downloads: bool,
-    
+
     #[serde(default = "default_true")]
     pub check_signatures: bool,
-    
+
     #[serde(default)]
     pub trusted_sources: Vec<String>,
-    
+
     #[serde(default = "default_true")]
     pub audit_dependencies: bool,
-    
+
     #[serde(default = "default_security_level")]
     pub security_level: SecurityLevel,
 }
@@ -72,15 +72,15 @@ pub enum SecurityLevel {
 pub struct NetworkSettings {
     #[serde(default = "default_timeout")]
     pub timeout_seconds: u64,
-    
+
     #[serde(default = "default_retries")]
     pub max_retries: u32,
-    
+
     pub proxy: Option<String>,
-    
+
     #[serde(default)]
     pub mirrors: HashMap<String, Vec<String>>,
-    
+
     #[serde(default = "default_true")]
     pub use_ipv6: bool,
 }
@@ -89,16 +89,16 @@ pub struct NetworkSettings {
 pub struct UiSettings {
     #[serde(default = "default_true")]
     pub colored_output: bool,
-    
+
     #[serde(default = "default_true")]
     pub show_progress: bool,
-    
+
     #[serde(default = "default_true")]
     pub interactive_prompts: bool,
-    
+
     #[serde(default = "default_verbosity")]
     pub verbosity: VerbosityLevel,
-    
+
     #[serde(default)]
     pub theme: UiTheme,
 }
@@ -123,13 +123,13 @@ pub enum UiTheme {
 pub struct PluginSettings {
     #[serde(default = "default_true")]
     pub enabled: bool,
-    
+
     #[serde(default)]
     pub plugin_directories: Vec<PathBuf>,
-    
+
     #[serde(default)]
     pub trusted_plugins: Vec<String>,
-    
+
     #[serde(default = "default_false")]
     pub auto_update_plugins: bool,
 }
@@ -138,27 +138,45 @@ pub struct PluginSettings {
 pub struct CacheSettings {
     #[serde(default = "default_true")]
     pub enabled: bool,
-    
+
     #[serde(default = "default_cache_size")]
     pub max_size_mb: u64,
-    
+
     #[serde(default = "default_cache_ttl")]
     pub ttl_hours: u32,
-    
+
     #[serde(default = "default_true")]
     pub auto_cleanup: bool,
 }
 
 // Default value functions
-fn default_true() -> bool { true }
-fn default_false() -> bool { false }
-fn default_parallel_downloads() -> u32 { 4 }
-fn default_timeout() -> u64 { 30 }
-fn default_retries() -> u32 { 3 }
-fn default_verbosity() -> VerbosityLevel { VerbosityLevel::Normal }
-fn default_security_level() -> SecurityLevel { SecurityLevel::Medium }
-fn default_cache_size() -> u64 { 1024 }
-fn default_cache_ttl() -> u32 { 24 }
+fn default_true() -> bool {
+    true
+}
+fn default_false() -> bool {
+    false
+}
+fn default_parallel_downloads() -> u32 {
+    4
+}
+fn default_timeout() -> u64 {
+    30
+}
+fn default_retries() -> u32 {
+    3
+}
+fn default_verbosity() -> VerbosityLevel {
+    VerbosityLevel::Normal
+}
+fn default_security_level() -> SecurityLevel {
+    SecurityLevel::Medium
+}
+fn default_cache_size() -> u64 {
+    1024
+}
+fn default_cache_ttl() -> u32 {
+    24
+}
 
 impl Default for SecuritySettings {
     fn default() -> Self {
@@ -227,7 +245,7 @@ impl GlobalConfig {
     pub fn new() -> Self {
         let mut profiles = HashMap::new();
         profiles.insert("default".to_string(), CyrusProfile::default());
-        
+
         Self {
             default_profile: "default".to_string(),
             profiles,
@@ -240,151 +258,162 @@ impl GlobalConfig {
             cache_settings: CacheSettings::default(),
         }
     }
-    
+
     pub fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let content = std::fs::read_to_string(path)
-            .map_err(|e| CyrusError::Config { 
-                message: format!("Failed to read config file: {}", e) 
-            })?;
-        
-        let config: GlobalConfig = toml::from_str(&content)
-            .map_err(|e| CyrusError::Config { 
-                message: format!("Failed to parse config file: {}", e) 
-            })?;
-        
+        let content = std::fs::read_to_string(path).map_err(|e| CyrusError::Config {
+            message: format!("Failed to read config file: {}", e),
+        })?;
+
+        let config: GlobalConfig = toml::from_str(&content).map_err(|e| CyrusError::Config {
+            message: format!("Failed to parse config file: {}", e),
+        })?;
+
         config.validate()?;
         Ok(config)
     }
-    
+
     pub fn save_to_file<P: AsRef<Path>>(&self, path: P) -> Result<()> {
         self.validate()?;
-        
-        let content = toml::to_string_pretty(self)
-            .map_err(|e| CyrusError::Config { 
-                message: format!("Failed to serialize config: {}", e) 
-            })?;
-        
-        std::fs::write(path, content)
-            .map_err(|e| CyrusError::Config { 
-                message: format!("Failed to write config file: {}", e) 
-            })?;
-        
+
+        let content = toml::to_string_pretty(self).map_err(|e| CyrusError::Config {
+            message: format!("Failed to serialize config: {}", e),
+        })?;
+
+        std::fs::write(path, content).map_err(|e| CyrusError::Config {
+            message: format!("Failed to write config file: {}", e),
+        })?;
+
         Ok(())
     }
-    
+
     pub fn validate(&self) -> Result<()> {
-        if let Err(errors) = Validate::validate(self) {
-            return Err(CyrusError::Validation { 
-                errors: validation_errors_to_vec(errors) 
+        // Manual validation instead of using the derive macro for now
+        if self.default_profile.is_empty() {
+            return Err(CyrusError::Config {
+                message: "Default profile cannot be empty".to_string(),
             });
         }
-        
+
+        if self.parallel_downloads == 0 || self.parallel_downloads > 10 {
+            return Err(CyrusError::Config {
+                message: "Parallel downloads must be between 1 and 10".to_string(),
+            });
+        }
+
         // Custom validation
         if !self.profiles.contains_key(&self.default_profile) {
-            return Err(CyrusError::Config { 
-                message: format!("Default profile '{}' does not exist", self.default_profile) 
+            return Err(CyrusError::Config {
+                message: format!("Default profile '{}' does not exist", self.default_profile),
             });
         }
-        
+
         Ok(())
     }
-    
+
     pub fn get_current_profile(&self) -> &CyrusProfile {
-        self.profiles.get(&self.default_profile)
+        self.profiles
+            .get(&self.default_profile)
             .expect("Default profile should exist after validation")
     }
-    
+
     pub fn add_profile(&mut self, name: String, profile: CyrusProfile) {
         self.profiles.insert(name, profile);
     }
-    
+
     pub fn switch_profile(&mut self, name: &str) -> Result<()> {
         if !self.profiles.contains_key(name) {
-            return Err(CyrusError::Config { 
-                message: format!("Profile '{}' does not exist", name) 
+            return Err(CyrusError::Config {
+                message: format!("Profile '{}' does not exist", name),
             });
         }
         self.default_profile = name.to_string();
         Ok(())
     }
-    
+
     pub fn add_global_alias(&mut self, alias: String, command: String) {
         self.global_aliases.insert(alias, command);
     }
-    
+
     pub fn get_warnings(&self) -> Vec<ValidationWarning> {
         let mut warnings = Vec::new();
-        
+
         // Check for performance warnings
         if self.parallel_downloads > 8 {
-            warnings.push(ValidationWarning::TooManyDependencies { 
-                count: self.parallel_downloads as usize 
+            warnings.push(ValidationWarning::TooManyDependencies {
+                count: self.parallel_downloads as usize,
             });
         }
-        
+
         // Check security settings
         if !self.security_settings.verify_downloads {
-            warnings.push(ValidationWarning::SecurityVulnerability { 
-                dep: "Download verification disabled".to_string() 
+            warnings.push(ValidationWarning::SecurityVulnerability {
+                dep: "Download verification disabled".to_string(),
             });
         }
-        
+
         warnings
     }
 }
 
-fn validation_errors_to_vec(errors: ValidationErrors) -> Vec<ValidationError> {
-    errors.field_errors()
-        .into_iter()
-        .flat_map(|(field, errors)| {
-            errors.iter().map(move |error| {
-                ValidationError::InvalidConfig { 
-                    message: format!("Field '{}': {}", field, error.message.as_ref().unwrap_or(&std::borrow::Cow::Borrowed("validation failed")))
-                }
-            })
-        })
-        .collect()
+fn validation_errors_to_vec(errors: validator::ValidationErrors) -> Vec<ValidationError> {
+    let mut result = Vec::new();
+
+    for (field, field_errors) in errors.field_errors() {
+        for error in field_errors {
+            let message = error
+                .message
+                .as_ref()
+                .map(|m| m.to_string())
+                .unwrap_or_else(|| "validation failed".to_string());
+
+            result.push(ValidationError::InvalidConfig {
+                message: format!("Field '{}': {}", field, message),
+            });
+        }
+    }
+
+    result
 }
 
 /// Enhanced project configuration with validation
-#[derive(Debug, Serialize, Deserialize, Validate, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct EnhancedProject {
     #[validate(length(min = 1))]
     pub name: String,
-    
+
     #[validate(length(min = 1))]
     pub language: String,
-    
+
     #[validate(custom = "validate_version")]
     pub version: String,
-    
+
     #[validate(length(min = 1))]
     pub package_manager: String,
-    
+
     #[serde(default)]
     pub dependencies: Vec<String>,
-    
+
     #[serde(default)]
     pub dev_dependencies: Vec<String>,
-    
+
     #[serde(default)]
     pub scripts: HashMap<String, String>,
-    
+
     #[serde(default)]
     pub environment: HashMap<String, String>,
-    
+
     #[serde(default = "default_true")]
     pub enable_aliases: bool,
-    
+
     #[serde(default)]
     pub custom_aliases: HashMap<String, String>,
-    
+
     #[serde(default)]
     pub workspace: Option<WorkspaceConfig>,
-    
+
     #[serde(default)]
     pub template_source: Option<String>,
-    
+
     #[serde(default)]
     pub metadata: ProjectMetadata,
 }
@@ -420,7 +449,9 @@ impl Default for ProjectMetadata {
 }
 
 fn validate_version(version: &str) -> std::result::Result<(), validator::ValidationError> {
-    if semver::Version::parse(version).is_ok() || version.chars().all(|c| c.is_numeric() || c == '.') {
+    if semver::Version::parse(version).is_ok()
+        || version.chars().all(|c| c.is_numeric() || c == '.')
+    {
         Ok(())
     } else {
         Err(validator::ValidationError::new("invalid_version"))
@@ -428,53 +459,84 @@ fn validate_version(version: &str) -> std::result::Result<(), validator::Validat
 }
 
 impl EnhancedProject {
-    pub fn validate_comprehensive(&self) -> Result<Vec<ValidationWarning>> {
-        // Basic validation
-        self.validate()
-            .map_err(|errors| CyrusError::Validation { 
-                errors: validation_errors_to_vec(errors) 
-            })?;
-        
+    pub fn validate_comprehensive(&self) -> Result<Vec<crate::error::ValidationWarning>> {
+        // Basic validation first
+        self.validate()?;
+
         let mut warnings = Vec::new();
-        
+
         // Language-specific validations
         match self.language.as_str() {
             "javascript" => {
-                if !self.dependencies.iter().any(|d| d.contains("typescript")) 
-                   && !self.dev_dependencies.iter().any(|d| d.contains("typescript")) {
-                    warnings.push(ValidationWarning::SuggestTypescript);
+                if !self.dependencies.iter().any(|d| d.contains("typescript"))
+                    && !self
+                        .dev_dependencies
+                        .iter()
+                        .any(|d| d.contains("typescript"))
+                {
+                    warnings.push(crate::error::ValidationWarning::SuggestTypescript);
                 }
-                
-                if self.package_manager == "npm" && 
-                   (self.dependencies.len() + self.dev_dependencies.len()) > 10 {
-                    warnings.push(ValidationWarning::SuboptimalPackageManager { 
-                        pm: "npm".to_string(), 
-                        suggested: "pnpm".to_string() 
+
+                if self.package_manager == "npm"
+                    && (self.dependencies.len() + self.dev_dependencies.len()) > 10
+                {
+                    warnings.push(crate::error::ValidationWarning::SuboptimalPackageManager {
+                        pm: "npm".to_string(),
+                        suggested: "pnpm".to_string(),
                     });
                 }
-            },
+            }
             "python" => {
                 let common_dev_deps = ["pytest", "black", "flake8", "mypy"];
-                let missing: Vec<String> = common_dev_deps.iter()
+                let missing: Vec<String> = common_dev_deps
+                    .iter()
                     .filter(|&dep| !self.dev_dependencies.iter().any(|d| d.contains(dep)))
                     .map(|&s| s.to_string())
                     .collect();
-                
+
                 if !missing.is_empty() {
-                    warnings.push(ValidationWarning::MissingDevDependencies { 
-                        suggestions: missing 
+                    warnings.push(crate::error::ValidationWarning::MissingDevDependencies {
+                        suggestions: missing,
                     });
                 }
-            },
+            }
             _ => {}
         }
-        
+
         // Check for too many dependencies
         let total_deps = self.dependencies.len() + self.dev_dependencies.len();
         if total_deps > 50 {
-            warnings.push(ValidationWarning::TooManyDependencies { count: total_deps });
+            warnings
+                .push(crate::error::ValidationWarning::TooManyDependencies { count: total_deps });
         }
-        
+
         Ok(warnings)
+    }
+    pub fn validate(&self) -> Result<()> {
+        if self.name.is_empty() {
+            return Err(CyrusError::Config {
+                message: "Project name cannot be empty".to_string(),
+            });
+        }
+
+        if self.language.is_empty() {
+            return Err(CyrusError::Config {
+                message: "Language cannot be empty".to_string(),
+            });
+        }
+
+        if self.version.is_empty() {
+            return Err(CyrusError::Config {
+                message: "Version cannot be empty".to_string(),
+            });
+        }
+
+        if self.package_manager.is_empty() {
+            return Err(CyrusError::Config {
+                message: "Package manager cannot be empty".to_string(),
+            });
+        }
+
+        Ok(())
     }
 }

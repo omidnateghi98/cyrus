@@ -6,7 +6,7 @@ use std::collections::HashMap;
 
 pub fn create_react_typescript_template() -> ProjectTemplate {
     let mut files = HashMap::new();
-    
+
     files.insert("src/App.tsx".to_string(), r#"import React from 'react';
 import './App.css';
 
@@ -88,7 +88,7 @@ code {
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#.parse().unwrap()000000" />
     <meta name="description" content="{{project_name}} - Built with Cyrus" />
     <title>{{project_name}}</title>
 </head>
@@ -97,7 +97,7 @@ code {
     <div id="root"></div>
 </body>
 </html>
-"#.to_string());
+" # .to_string());
 
     files.insert("tsconfig.json".to_string(), r#"{
   "compilerOptions": {
@@ -168,7 +168,7 @@ Created by {{author}} in {{current_year}}.
 
     // Features
     let mut features = Vec::new();
-    
+
     // Router feature
     let mut router_files = HashMap::new();
     router_files.insert("src/components/Router.tsx".to_string(), r#"import React from 'react';
@@ -252,7 +252,7 @@ export default Router;
 
 pub fn create_rust_cli_template() -> ProjectTemplate {
     let mut files = HashMap::new();
-    
+
     files.insert("src/main.rs".to_string(), r#"use clap::{Parser, Subcommand};
 use anyhow::Result;
 
@@ -282,7 +282,7 @@ enum Commands {
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    
+
     match cli.command {
         Commands::Hello { name } => {
             let name = name.unwrap_or_else(|| "World".to_string());
@@ -299,7 +299,7 @@ fn main() -> Result<()> {
             // Add interactive functionality here
         }
     }
-    
+
     Ok(())
 }
 "#.to_string());
@@ -445,7 +445,7 @@ Created by {{author}} in {{current_year}}.
 
 pub fn create_python_api_template() -> ProjectTemplate {
     let mut files = HashMap::new();
-    
+
     files.insert("main.py".to_string(), r#""""
 {{project_name}} - FastAPI application built with Cyrus
 Author: {{author}}
@@ -528,10 +528,10 @@ async def update_item(item_id: int, item_update: ItemCreate):
     item = next((item for item in items_db if item.id == item_id), None)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
-    
+
     for key, value in item_update.dict().items():
         setattr(item, key, value)
-    
+
     return item
 
 @app.delete("/items/{item_id}")
