@@ -64,21 +64,21 @@ validator = { version = "0.16", features = ["derive"] }
 config = "0.13"
 
 # Template engine
-handlebars = "4.5"
-tera = "1.19"
+handlebars = { version = "4.5", optional = true }
+tera = { version = "1.19", optional = true }
 
 # Git operations
-git2 = "0.18"
+git2 = { version = "0.18", optional = true }
 
 # Process management
 subprocess = "0.2"
 
 # Plugin system
-libloading = "0.8"
-dlopen = "0.1"
+libloading = { version = "0.8", optional = true }
+dlopen = { version = "0.1", optional = true }
 
 # Security
-ring = "0.17"
+ring = { version = "0.17", optional = true }
 
 [dev-dependencies]
 assert_cmd = "2.0"
