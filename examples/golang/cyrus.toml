@@ -1,0 +1,11 @@
+name = "golang-example"
+language = "golang"
+version = "1.21"
+package_manager = "go mod"
+dependencies = []
+dev_dependencies = []
+
+[scripts]
+build = "go build"
+run = "go run main.go"
+test = "go test"

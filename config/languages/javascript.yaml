@@ -1,0 +1,29 @@
+name: javascript
+display_name: Node.js
+versions:
+  - "16"
+  - "18"
+  - "20"
+  - "21"
+default_version: "20"
+package_managers:
+  - npm
+  - yarn
+  - pnpm
+  - bun
+default_package_manager: npm
+download_urls:
+  "20": "https://nodejs.org/dist/v20.0.0/node-v20.0.0-win-x64.zip"
+install_commands:
+  - "npm install {package}"
+  - "yarn add {package}"
+  - "pnpm add {package}"
+  - "bun add {package}"
+run_commands:
+  node: "node"
+  npm: "npm"
+  yarn: "yarn"
+  pnpm: "pnpm"
+  bun: "bun"
+environment_setup:
+  - "npm init -y"

@@ -1,0 +1,53 @@
+[package]
+name = "cyrus"
+version = "0.1.0"
+edition = "2021"
+authors = ["Omid Nateghi <omid@example.com>"]
+description = "All-in-One language management tool for developers"
+license = "MIT"
+repository = "https://github.com/omidnateghi/cyrus"
+homepage = "https://cyrus-lang.org"
+keywords = ["language-manager", "development", "cli", "rust"]
+categories = ["command-line-utilities", "development-tools"]
+
+[[bin]]
+name = "cyrus"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+toml = "0.8"
+tokio = { version = "1.0", features = ["full"] }
+anyhow = "1.0"
+dirs = "5.0"
+reqwest = { version = "0.11", features = ["json", "stream"] }
+tar = "0.4"
+flate2 = "1.0"
+indicatif = "0.17"
+colored = "2.0"
+dialoguer = "0.11"
+walkdir = "2.3"
+sha2 = "0.10"
+semver = "1.0"
+log = "0.4"
+env_logger = "0.10"
+tempfile = "3.8"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.0"
+tempfile = "3.8"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# Additional dependencies for missing features
+regex = "1.10"
+async-trait = "0.1"
+tokio-stream = "0.1"

@@ -1,0 +1,10 @@
+name = "python-example"
+language = "python"
+version = "3.11"
+package_manager = "pip"
+dependencies = ["requests"]
+dev_dependencies = ["pytest"]
+
+[scripts]
+start = "python app.py"
+test = "pytest"

@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      
+    - name: Build release
+      run: cargo build --release
+      
+    - name: Create release archive
+      shell: bash
+      run: |
+        if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          7z a cyrus-${{ matrix.os }}.zip target/release/cyrus.exe config/
+        else
+          tar czf cyrus-${{ matrix.os }}.tar.gz -C target/release cyrus -C ../../config .
+        fi
+        
+    - name: Upload to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: cyrus-${{ matrix.os }}.*
+        asset_name: cyrus-${{ matrix.os }}.*
+        asset_content_type: application/octet-stream

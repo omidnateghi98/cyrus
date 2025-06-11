@@ -1,0 +1,11 @@
+name = "javascript-example"
+language = "javascript"
+version = "20"
+package_manager = "npm"
+dependencies = ["express"]
+dev_dependencies = ["jest"]
+
+[scripts]
+start = "node app.js"
+dev = "nodemon app.js"
+test = "jest"
